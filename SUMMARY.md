@@ -24,6 +24,7 @@
     * [建置Ubuntu-server](mo-shi/fen-san-shi/jian-zhi-ubuntuserver.md)
     * [事前準備](mo-shi/fen-san-shi/qian-zhi-zuo-ye-guan-nian-jie-shao.md)
     * [開始架設hadoop](mo-shi/fen-san-shi/kai-shi-jia-she-hadoop.md)
+    * [Spark on yarn](mo-shi/fen-san-shi/spark-on-yarn.md)
 * [在AWS上建置Hadoop](zai-aws-shang-jian-zhi-hadoop/README.md)
   * [建置環境介紹](zai-aws-shang-jian-zhi-hadoop/jian-zhi-huan-jing-jie-shao.md)
 

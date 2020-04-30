@@ -27,12 +27,12 @@ description: 架設hadoop前，確認Linux所需要的環境的重要事項
    * 後續寫code以python為主
    * 安裝python套件需要pip3
 
-#### 複製VM後所需步驟
+#### 複製VMs後所需步驟
 
-* 更改主機名稱
-  * 若不改名，易造成辨識上的混淆
-* 更改VM ip
-  * 才不會ip相衝
+1. 更改主機名稱
+   * 若不改名，易造成辨識上的混淆
+2. 更改VMsIP
+   * 才不會IP相衝
 
 ### 基本步驟
 
@@ -282,19 +282,73 @@ cat pip3.6
 {% endtab %}
 {% endtabs %}
 
-### 複製VMs
+### 複製VMs 
 
-
+1. 1台win10要複製1台，共兩台VMs
+2. 6台win10 x 2VMs = 12 台 VMs 
+3. 下`poweroff`指令，將VMs關機。
+4. 更改目錄名稱
+   * 在C:\VMs裡，將bdse211再複製一份。並且重新取名叫bdse212
+5. 更改VMs的名稱
+   * 在VMware裡打開bdse212後，要將bdse211名字重新取名為bdse212
+     * 以免後續處理上會混淆
+6. 進入bdse212時，要選擇**I copied it.**
+   * 千萬不能選錯
 
 ### 複製VMs後的步驟
 
+* 在console裡操作
+* 需等更改hostname及IP後才能用putty接進來
+
 {% tabs %}
 {% tab title="更改主機名稱" %}
+```text
+# root
+sudo -i
 
+# 確認hostname
+hostnamectl
+
+# 更改設定檔
+nano /etc/cloud/cloud.cfg
+   preserve_hostname: true # 預設是false
+# 更改後才會保留修正後的hostname
+# 若無更改此設定檔，即使修改hostname，在reboot後也會還原
+
+# 更改hostname
+hostnamectl set-hostname bdse212 (自行取名)
+hostnamectl # 確認
+
+# 重開機確認
+reboot
+hostnamectl
+```
 {% endtab %}
 
 {% tab title="更改IP" %}
+```text
+# root
+sudo -i
 
+# 檢查ip
+ip addr show | grep 'inet '
+
+# 檢查預設閘道
+ip route list
+
+# 更改成要設定的ip
+nano /etc/netplan/50-cloud-init.yaml
+    address :  192.168.100.212
+
+# 套用修改後的
+netplan apply
+
+# 確認ip
+ip addr show | grep 'inet'
+
+# 確認網路
+ping -c 4 www.google.com
+```
 {% endtab %}
 {% endtabs %}
 
