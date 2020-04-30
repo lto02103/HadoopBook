@@ -2,7 +2,6 @@
 
 * [Introduction](README.md)
 * [Untitled](untitled.md)
-* [Untitled](untitled-1.md)
 
 ## 觀念
 
@@ -10,6 +9,7 @@
   * [HDFS](guan-nian/ji-chu/hdfs.md)
   * [YARN](guan-nian/ji-chu/yarn.md)
   * [MapReduce](guan-nian/ji-chu/mapreduce.md)
+  * [Spark](guan-nian/ji-chu/spark.md)
 * [進階](guan-nian/jin-jie/README.md)
   * [HA](guan-nian/jin-jie/ha.md)
 
@@ -19,6 +19,7 @@
   * [單機版](mo-shi/chan-ji-ban.md)
   * [偽分散式](mo-shi/wei-fen-san-shi.md)
   * [分散式](mo-shi/fen-san-shi/README.md)
+    * [作業環境](mo-shi/fen-san-shi/untitled-1.md)
     * [建置環境介紹](mo-shi/fen-san-shi/jian-zhi-huan-jing-jie-shao.md)
     * [前置作業\_觀念介紹](mo-shi/fen-san-shi/qian-zhi-zuo-ye-guan-nian-jie-shao.md)
 * [在AWS上建置Hadoop](zai-aws-shang-jian-zhi-hadoop/README.md)
