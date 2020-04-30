@@ -32,6 +32,15 @@ description: '版本 : Ubuntu-server 18.04.04'
    * 為了建置Hadoop的叢集
    * Hadoop叢集會抓IP,IP每次都不固定會跑不了
 
+| IP |  |  |
+| :--- | :---: | :---: |
+| IP位置 | 192.168.100.210\(個人IP\) | 座號x10 |
+| 子網路遮罩 | 255.255.255.0 | C級網域 |
+| 預設閘道 | 192.168.100.254 | 中華電信gateway |
+|  | DNS |  |
+| 慣用 | 168.95.1.1 | 中華電信 |
+| 其他 | 101.101.101.101 | 國家網路中心\(twnic\) |
+
 ## 安裝ubuntu-server
 
 ### 下載ubuntu-server.iso
@@ -44,17 +53,25 @@ description: '版本 : Ubuntu-server 18.04.04'
 
 ### 系統設定
 
+{% tabs %}
+{% tab title="First Tab" %}
+d
 
+```text
 
-1. 
-| IP |  |  |
-| :--- | :--- | :--- |
-| IP位置 | 192.168.35.210\(個人IP\) | 座號x10 |
-| 子網路遮罩 | 255.255.255.0 | C級網域 |
-| 預設閘道 | 192.168.35.254 | 資策會gateway |
-| DNS |  |  |
-| 慣用 | 168.95.1.1 | 中華電信 |
-| 其他 | 101.101.101.101 | 國家網路中心\(twnic\) |
+```
+
+* [ ] 
+{% endtab %}
+
+{% tab title="Second Tab" %}
+
+{% endtab %}
+
+{% tab title="" %}
+
+{% endtab %}
+{% endtabs %}
 
 **確認** : cmd-&gt;ipconfig
 
@@ -78,7 +95,7 @@ description: '版本 : Ubuntu-server 18.04.04'
    * 4個 process
    * RAM :24576MB \(24\*1024\)
    * 選bridged路徑
-     * 橋接實際網卡,不能接在VM上的網卡
+     * 橋接實際網卡,不能接在VM上的網卡\(intel開頭\)
    * DVD/CD:放入ubuntu\_server\_64.iso
      * 安裝完記得退片
 4. 安裝Ubuntu Server 設定很重要
@@ -88,24 +105,27 @@ description: '版本 : Ubuntu-server 18.04.04'
      2. Manual
      3. 設定IP,如表格1
      4. 確認出現static
-   * proxy不填
-   * mirror address:[http://free.nchc.org.tw/ubuntu](http://free.nchc.org.tw/ubuntu)
-     * 找最快的:國網
-   * 硬碟切割
-     * Use an entire disk and set up LVM
-       * ubuntu-vg\(new\)&gt;LVM volume group &gt; create logical volume
-         * SWAP \(一般8G就夠用\)
-         * 12G
-       * at /\(根目錄\)&gt;edit&gt;size改成max
-     * done&gt; continue
-   * 設定帳號名稱
-     * 都一樣比較好
-     * 帳號:ubuntu
-     * 密碼:ubuntu \(自己編\)
-     * your server’s name : ubuntu211 \(跟VMs名稱一致\)
-   * SSH
-     * 打開 \(有X\)
-   * 選Done &gt; reboot
+
+
+
+1. proxy不填
+2. mirror address:[http://free.nchc.org.tw/ubuntu](http://free.nchc.org.tw/ubuntu)
+   * 找最快的:國網
+3. 硬碟切割
+   * Use an entire disk and set up LVM
+     * ubuntu-vg\(new\)&gt;LVM volume group &gt; create logical volume
+       * SWAP \(一般8G就夠用\)
+       * 12G
+     * at /\(根目錄\)&gt;edit&gt;size改成max
+   * done&gt; continue
+4. 設定帳號名稱
+   * 都一樣比較好
+   * 帳號:ubuntu
+   * 密碼:ubuntu \(自己編\)
+   * your server’s name : ubuntu211 \(跟VMs名稱一致\)
+5. SSH
+   * 打開 \(有X\)
+6. 選Done &gt; reboot
 
 ```text
                 swap in
