@@ -17,9 +17,9 @@
 ## 建置Hadoop
 
 * [模式](mo-shi/README.md)
-  * [單機版](mo-shi/chan-ji-ban.md)
-  * [偽分散式](mo-shi/wei-fen-san-shi.md)
-  * [完全分散式](mo-shi/fen-san-shi/README.md)
+  * [單機版  Standalone Mode](mo-shi/chan-ji-ban.md)
+  * [偽分散式 Pseudo-Distributed Mode](mo-shi/wei-fen-san-shi.md)
+  * [完全分散式 Fully-Distributed Mode](mo-shi/fen-san-shi/README.md)
     * [作業環境](mo-shi/fen-san-shi/untitled-1.md)
     * [建置Ubuntu-server](mo-shi/fen-san-shi/jian-zhi-ubuntuserver.md)
     * [事前準備](mo-shi/fen-san-shi/qian-zhi-zuo-ye-guan-nian-jie-shao.md)

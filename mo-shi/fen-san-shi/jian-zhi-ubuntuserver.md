@@ -6,9 +6,9 @@ description: '版本 : Ubuntu-server 18.04.04'
 
 ## 所需要的工具
 
-* VMware workstation player 15
-* ubuntu18.04.04-server-amd64.iso
-* 一顆耐心
+* [ ] VMware workstation player 15
+* [ ] ubuntu18.04.04-server-amd64.iso
+* [ ] 一顆耐心
 
 ## 安裝VMware workstation player
 
@@ -26,13 +26,17 @@ description: '版本 : Ubuntu-server 18.04.04'
 
 ## IP設定
 
-要先固定ip
+### 確認目前ip
 
-1. 在win10固定IP \(cmd &gt;&gt; ipconfig\)
-   * 為了建置Hadoop的叢集
-   * Hadoop叢集會抓IP,IP每次都不固定會跑不了
+* 開啟cmd輸入`ipconfig` 確認目前ip並記錄下來
 
-| IP |  |  |
+### 固定ip
+
+* 在win10固定IP
+  * 為了建置Hadoop的叢集
+  * Hadoop叢集會抓IP,IP每次都不固定會跑不了
+
+| 名稱 | IP | 描述 |
 | :--- | :---: | :---: |
 | IP位置 | 192.168.100.210\(個人IP\) | 座號x10 |
 | 子網路遮罩 | 255.255.255.0 | C級網域 |
@@ -40,6 +44,8 @@ description: '版本 : Ubuntu-server 18.04.04'
 |  | DNS |  |
 | 慣用 | 168.95.1.1 | 中華電信 |
 | 其他 | 101.101.101.101 | 國家網路中心\(twnic\) |
+
+* 開啟cmd輸入`ipconfig` 確認ip是否正確
 
 ## 安裝ubuntu-server
 
