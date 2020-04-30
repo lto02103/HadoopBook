@@ -36,38 +36,7 @@ description: '版本 : Ubuntu-server 18.04.04'
 
 ### 系統設定
 
-#### 更新
 
-```bash
-# 檢查核心版本
-uname -r
-
-# 更新
-sudo -i
-apt update
-apt upgrade
-reboot
-
-# 安裝必要套件
-sudo -i
-apt install dkms
-apt install build-essential
-
-# 檢查核心版本
-uname -r    # 4.15.0-76-generic
-
-# 安裝核心
-apt install linux-headers-4.15.0-76-generic # 要升級的核心版本
-
-# 安裝open VMware tools
-apt install open-vm-tools
-reboot
-
-# 刪除不必要的套件
-apt autoremove
-```
-
-#### 確認時區
 
 
 
