@@ -33,6 +33,7 @@
 * [Write](xiao-neng-ce-shi/write.md)
 * [Read](xiao-neng-ce-shi/read.md)
 * [NameNode 壓力負載](xiao-neng-ce-shi/namenode-ya-li-fu-zai.md)
+* [mapreduce](xiao-neng-ce-shi/mapreduce.md)
 
 ## 進階
 
