@@ -4,15 +4,25 @@
 
 
 
-1. 改hosts
-2. 創建hadoop 帳號
-   * 專門給hadoop環境的帳號
-3. ssh 數位簽章登入 hadoop 帳號 
-   * 無密碼登入
-   * ip 跟主機改名才可以做
-   * 若出現問題較好除錯
-4. 
+* 改hosts
+  * 讓nodes之間認得彼此的電腦是誰
+* 創建hadoop 帳號
+  * 專門給hadoop環境的帳號
+* ssh 數位簽章登入 hadoop 帳號 
+  * 無密碼登入
+  * ip 跟主機改名才可以做
+  * 若出現問題較好除錯
+* 
 {% tabs %}
+{% tab title="更改hosts" %}
+
+
+```text
+sudo -i
+
+```
+{% endtab %}
+
 {% tab title="創建hadoop 帳號" %}
 * 創建hadoop帳號 
 

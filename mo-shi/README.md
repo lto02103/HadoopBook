@@ -10,10 +10,17 @@
    * Hadoop中的背景Java程式運行數個主機上。
 
 | 屬性 | 本機模式 | 偽分佈式模式 | 完全分佈式模式 |
-| :--- | :--- | :--- | :--- |
+| :--- | :---: | :---: | :---: |
 | fs.defaultFS | file:/// | hdfs:/// | hdfs:/// |
 | dfs.replication | N/A | 1 | 3 |
 | mapreduce .framework.name | N/A | yarn | yarn |
 | yarn.resourcemanager.hostname | N/A | localhost | resourcemanager |
 | yarn.nodemanager.auxervices | N/A | mapreduce\_shuffle | mapreduce\_shuffle |
+
+## 推薦書籍 : 
+
+1. [Hadoop技術手冊](https://www.oreilly.com/library/view/hadoop-the-definitive/9781491901687/)
+2. [Hadoop管理手冊](https://www.tenlong.com.tw/products/9789862769973)
+
+
 

@@ -6,9 +6,9 @@ description: '版本 : Ubuntu-server 18.04.04'
 
 ## 所需要的工具
 
-* [ ] VMware workstation player 15
-* [ ] ubuntu18.04.04-server-amd64.iso
-* [ ] 一顆耐心
+* [x] VMware workstation player 15
+* [x] ubuntu18.04.04-server-amd64.iso
+* [x] 一顆耐心
 
 ## 安裝VMware workstation player
 
@@ -20,7 +20,7 @@ description: '版本 : Ubuntu-server 18.04.04'
 
 一鍵確認到底。
 
-### VMs檔案放置
+## VMs檔案放置位置
 
 在C槽新增VMs的目錄，VMs\(虛擬機\)的資料一律放置在**C:\VMs**底下 \(管理上較好管理\) 😀 
 
@@ -79,25 +79,22 @@ d
 {% endtab %}
 {% endtabs %}
 
-**確認** : cmd-&gt;ipconfig
-
 1. 安裝VMware
    1. 灌VMware
 
    * 預設 spilt,500G
      * 若是機房可選one disk
-     * spilt 是考慮到拷貝及回家使用的需求
+     * spilt 是考慮到拷貝及回家使用的需求 ![](../../.gitbook/assets/sshot-1.png) 
 2. 設定
    * CPU 12
      * VM : 4,4
      * HOST : 4
-   * RAM 64
+   * RAM 64G
      * VM : 24,24 \(24 x1024\)
-     * HOST : 16
-   * 
+     * HOST : 16G
 3. 新增VMs
-   * 取名:ubuntu211
-   * 放在\VMs\ubuntu211
+   * 取名:bdse211
+   * 放在\VMs\bdse211
    * 4個 process
    * RAM :24576MB \(24\*1024\)
    * 選bridged路徑
@@ -111,27 +108,24 @@ d
      2. Manual
      3. 設定IP,如表格1
      4. 確認出現static
-
-
-
-1. proxy不填
-2. mirror address:[http://free.nchc.org.tw/ubuntu](http://free.nchc.org.tw/ubuntu)
+5. proxy不填
+6. mirror address:[http://free.nchc.org.tw/ubuntu](http://free.nchc.org.tw/ubuntu)
    * 找最快的:國網
-3. 硬碟切割
+7. 硬碟切割
    * Use an entire disk and set up LVM
      * ubuntu-vg\(new\)&gt;LVM volume group &gt; create logical volume
        * SWAP \(一般8G就夠用\)
-       * 12G
+       * 12G\(設定12G也可以\)
      * at /\(根目錄\)&gt;edit&gt;size改成max
    * done&gt; continue
-4. 設定帳號名稱
+8. 設定帳號名稱
    * 都一樣比較好
    * 帳號:ubuntu
    * 密碼:ubuntu \(自己編\)
-   * your server’s name : ubuntu211 \(跟VMs名稱一致\)
-5. SSH
-   * 打開 \(有X\)
-6. 選Done &gt; reboot
+   * your server’s name : bdse211 \(跟VMs名稱一致\)
+9. SSH
+   * 打開 \(有X代表打開\)
+10. 選Done &gt; reboot
 
 ```text
                 swap in
