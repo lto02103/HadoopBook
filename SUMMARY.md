@@ -20,8 +20,9 @@
   * [偽分散式](mo-shi/wei-fen-san-shi.md)
   * [分散式](mo-shi/fen-san-shi/README.md)
     * [作業環境](mo-shi/fen-san-shi/untitled-1.md)
-    * [建置環境介紹](mo-shi/fen-san-shi/jian-zhi-huan-jing-jie-shao.md)
-    * [前置作業\_觀念介紹](mo-shi/fen-san-shi/qian-zhi-zuo-ye-guan-nian-jie-shao.md)
+    * [建置Ubuntu-server](mo-shi/fen-san-shi/jian-zhi-ubuntuserver.md)
+    * [事前準備](mo-shi/fen-san-shi/qian-zhi-zuo-ye-guan-nian-jie-shao.md)
+    * [開始架設hadoop](mo-shi/fen-san-shi/kai-shi-jia-she-hadoop.md)
 * [在AWS上建置Hadoop](zai-aws-shang-jian-zhi-hadoop/README.md)
   * [建置環境介紹](zai-aws-shang-jian-zhi-hadoop/jian-zhi-huan-jing-jie-shao.md)
 
