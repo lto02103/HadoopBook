@@ -266,9 +266,92 @@ nano /usr/local/hadoop/etc/hadoop/hadoop-env.sh
 
 ## 更改hadoop系統設定檔
 
+* 4 CPU, 24GB RAM per Node的設定
+
+### 各節點設定
+
+1. NameNode : bdse211.example.org
+2. ResourceManager : bdse212.example.org
+3. JobhostoryServer : bdse213.example.org
+4. workers :
+   * bdse213.example.org
+   * bdse214.example.org
+   * bdse215.example.org
+
+### Port的對應
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align:left">Nodes</th>
+      <th style="text-align:left">WebUI</th>
+      <th style="text-align:left">Host:nodes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align:left">NameNode</td>
+      <td style="text-align:left">
+        <p>9870(3.x)</p>
+        <p>50070(2.x)</p>
+      </td>
+      <td style="text-align:left">
+        <p>8020</p>
+        <p>&#x53EA;&#x8981;&#x52D5;HDFS,&#x5C31;&#x6703;&#x4F7F;&#x7528;8020port</p>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align:left">ResourceManager</td>
+      <td style="text-align:left">8088</td>
+      <td style="text-align:left">
+        <p>8032</p>
+        <p>&#x53EA;&#x8981;&#x52D5;YARN,&#x5C31;&#x6703;&#x4F7F;&#x7528;8020port</p>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align:left">JobHistotryServer</td>
+      <td style="text-align:left">19888</td>
+      <td style="text-align:left">
+        <p>10020</p>
+        <p>&#x8DDF;NodeManger&#x6E9D;&#x901A;</p>
+      </td>
+    </tr>
+  </tbody>
+</table>* 參考資料
+  1. [Apache hadoop 3.2.1](https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/ClusterSetup.html)
+  2. [cloudera](https://docs.cloudera.com/HDPDocuments/HDP2/HDP-2.6.5/bk_reference/content/hdfs-ports.html)
+
 {% tabs %}
 {% tab title="core-site.xml" %}
+* core-site的設定檔
+  * hdfs的目錄
 
+```text
+# hadoop account
+su - hadoop
+
+# 更改core-site.xml
+nano /usr/local/hadoop/etc/hadoop/core-site.xml
+
+<!-- 將hdfs系統的目錄設定在/home/hadoop/data下 -->
+<property>
+    <name>hadoop.tmp.dir</name>         
+    <value>/home/hadoop/data</value>    
+    <description>Temporary Directory.</description>
+</property>
+
+<!--設定用hdfs系統當作檔案系統-->
+<!--bdse211.example.org 當作NameNode-->
+<property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://bdse211.example.org</value>   
+    <description>Use HDFS as file storage engine</description>
+</property>
+
+# hadoop 3.1 後才有 檢查xml語法有無正確
+hadoop conftest
+
+```
 {% endtab %}
 
 {% tab title="hdfs-site.xml" %}
@@ -276,13 +359,152 @@ nano /usr/local/hadoop/etc/hadoop/hadoop-env.sh
 {% endtab %}
 
 {% tab title="yarn-site.xml" %}
+* yarn-site的設定檔
+  * ResourceManager
+  * NodeManager
 
+```text
+# hadoop account
+su - hadoop
+
+# 更改yarn-site.xml
+nano /usr/local/hadoop/etc/hadoop/yarn-site.xml
+
+<!--bdse212當作ResourceManager-->
+<property>
+	   <name>yarn.resourcemanager.hostname</name>
+	   <value>bdse212.example.org</value>
+</property>	
+    
+<!-- -->    
+<property>
+    <name>yarn.nodemanager.aux-services</name>
+    <value>mapreduce_shuffle</value>
+</property>
+
+<!--白名單-->
+<property>
+    <name>yarn.nodemanager.env-whitelist</name>
+    <value>JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,HADOOP_CONF_DIR,CLASSPATH_PREPEND_DISTCACHE,HADOOP_YARN_HOME,HADOOP_MAPRED_HOME</value>    (白名單,放在裡面才會跑) 
+</property>
+<property>
+    <name>yarn.nodemanager.resource.cpu-vcores</name>
+    <value>3</value>
+</property>
+<property>
+    <name>yarn.nodemanager.resource.memory-mb</name>
+    <value>20480</value>
+</property>
+<property>
+    <name>yarn.scheduler.maximum-allocation-vcores</name>
+    <value>3</value>
+</property>
+<property>
+    <name>yarn.scheduler.minimum-allocation-mb</name>
+    <value>1024</value>
+</property>
+<property>
+    <name>yarn.scheduler.maximum-allocation-mb</name>
+    <value>20480</value>
+</property>
+<property>
+    <name>yarn.scheduler.increment-allocation-mb</name>
+    <value>512</value>
+</property>
+
+# check xml syntax
+hadoop conftest
+```
 {% endtab %}
 
 {% tab title="mapred-site.xml" %}
+* mapreduce的設定檔
+  * map
+  * reduce
+  * mrappmaster
 
+```text
+# hadoop account
+su - hadoop
+
+# 更改mapred-site.xml
+nano /usr/local/hadoop/etc/hadoop/mapred-site.xml
+
+<!--mapreduce的資料層是yarn-->
+<property>
+    <name>mapreduce.framework.name</name>
+    <value>yarn</value>
+</property>
+
+<!--設定jobhistoryserver的主機-->
+<!--jobhistoryserver利用10020 port跟nodemanager互相溝通-->
+<property>
+   <name>mapreduce.jobhistory.address</name>
+   <value>bdse213.example.org:10020</value>
+</property>
+
+<!--設定jobhistoryserver的webUI-->
+<!--bdse213.example.org 當作jobhistoryserver-->
+<!--只能追蹤mapreduce，無法追蹤spark(不會使用mapreduce)-->
+<property>
+   <name>mapreduce.jobhistory.webapp.address</name>
+	 <value>bdse213.example.org:19888</value>      
+</property>
+
+<!--mrappmaster的設定-->
+<property>
+    <name>yarn.app.mapreduce.am.resource.cpu-vcores</name>
+    <value>3</value>
+</property>
+<property>
+    <name>yarn.app.mapreduce.am.resource.mb</name>
+    <value>6656</value>
+</property>
+<property>
+    <name>yarn.app.mapreduce.am.command-opts</name>
+    <value>-Xmx5324m</value>
+</property>
+
+<!--map的設定-->
+<property>
+    <name>mapreduce.map.cpu.vcores</name>
+    <value>3</value>
+</property>
+<property>
+    <name>mapreduce.map.memory.mb</name>
+    <value>6656</value>
+</property>
+<property>
+    <name>mapreduce.map.java.opts</name>
+    <value>-Xmx5324m</value>
+</property>
+<property>
+    <name>mapreduce.task.io.sort.mb</name>
+    <value>1331</value>
+</property>
+
+<!--reduce的設定-->
+<property>
+    <name>mapreduce.reduce.cpu.vcores</name>
+    <value>3</value>
+</property>
+<property>
+    <name>mapreduce.reduce.memory.mb</name>
+    <value>6656</value>
+</property>
+<property>
+    <name>mapreduce.reduce.java.opts</name>
+    <value>-Xmx5324m</value>
+</property>
+
+
+# 檢查xml語法有無正確
+hadoop conftest
+```
 {% endtab %}
 {% endtabs %}
+
+
 
 ## 使用Hadoop上的注意事項
 
