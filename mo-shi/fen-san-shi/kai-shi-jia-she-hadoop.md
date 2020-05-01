@@ -15,11 +15,48 @@
 * 
 {% tabs %}
 {% tab title="更改hosts" %}
-
+* 更改hosts檔，彼此nodes才認得對方的電腦是誰
+* 除了所有的nodes的hosts之外，還要加上localhost
 
 ```text
+# root
 sudo -i
 
+# 編輯hosts檔
+# 格式 : ip FQDN alias
+# FQDN = hostname + domainname 
+nano /etc/hosts
+
+    # 本機一定要加上去   
+    # 確認所有TCP/IP socket 程式(服務) 能正常運作
+    127.0.0.1 localhost.localdomain localhost
+    
+    # 有多少個nodes就加多少個nodes上去
+    #      ip             FQDN            alias
+    192.168.100.211 bdse211.example.org bdse211
+    192.168.100.212 bdse212.example.org bdse212
+    
+#   192.168.56.90 master1.example.org master1
+#   192.168.56.89 master2.example.org master2
+#   192.168.56.88 master3.example.org master3
+#   192.168.56.91 worker1.example.org worker1
+#   192.168.56.92 worker2.example.oeg worker2
+#   192.168.56.85 client.example.org  client
+    
+    # ^+s 存檔 > ^+x 退出    
+
+# 檢查換行是否正確
+cat -A /etc/hosts
+
+# 若有出現微軟換行^M$，要置換掉 (用filezilla傳送檔案)
+sed -i 's/\r//g' hosts 
+
+# 再檢查一次
+cat -A /etc/hosts   # 出現$結尾才是正確
+
+# 確認hosts內容是否正確(確認連線，所有的hosts都要確認)
+ping -c4 bdse211.example.org
+ping -c4 bdse212.example.org
 ```
 {% endtab %}
 
