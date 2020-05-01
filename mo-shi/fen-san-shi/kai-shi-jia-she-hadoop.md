@@ -167,7 +167,99 @@ ssh hadoop@bdse215.example.org
 
 
 ```text
+# root
+sudo -i
+
 # 下載hadoop-3.2.1版
+# 請右鍵製貼上
+# hadoop目前為3.2.1版本
+# 若版本更新自行去官網搜尋 https://www.apache.org/dyn/closer.cgi/hadoop/common
+wget http://ftp.tc.edu.tw/pub/Apache/hadoop/common/hadoop-3.2.1/hadoop-3.2.1.tar.gz 
+
+# 確認
+ls -lh
+# 343MB
+
+# 查看
+tar -tvf hadoop.... # tab自動完成
+
+# 解開
+# -C (change到 後面的目錄)
+# /usr/local 裝第三方軟體的目錄
+tar -xvf hadoop.... -C /usr/local  # tab自動完成
+
+# 確認
+ls -l /usr/local
+
+# 查看檔案目錄真正大小
+# 避免解縮縮過程檔案錯誤
+# 919332k +-16k
+du -s /usr/local/ha.... # tab
+
+# 查看使用狀況
+df -h /usr/local
+# 2%
+
+# 更名(官方用此方法)
+mv /usr/local/hadoop-3.2.1 /usr/local/hadoop
+
+# 將/usr/local/hadoop 下的所有的檔案授權給hadoop帳號擁有
+# -R :包含此目錄下所有的檔案
+# 若terminal上有出現user:group=hadoop:hadoop，只是好巧。建議再做一次較好
+chown -R hadoop:hadoop /usr/local/hadoop
+
+```
+{% endtab %}
+
+{% tab title="設定個人環境變數" %}
+* ~/.bashrc  : 個人設定檔
+
+```text
+# hadoop account
+su - hadoop
+
+# 設定個人環境變數
+nano ~/.bashrc
+ ​   # Set HADOOP_HOME
+    export HADOOP_HOME=/usr/local/hadoop
+	  # Set HADOOP_MAPRED_HOME
+    export HADOOP_MAPRED_HOME=${HADOOP_HOME}
+    # Add Hadoop bin and sbin directory to PATH
+    export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+    # ^+s > ^+x
+    
+# 重新載入設定檔
+source ~/.bashrc # 方法一 (絕對路徑)
+. .basrc # 方法二 (相對路徑:在目前目錄下重新載入.bashrc設定檔)
+
+# 查看
+env 
+
+# 確認版本以及找得到$JAVA_HOME
+hadoop version
+```
+
+{% hint style="info" %}
+* /etc/profile.d : 共用設定檔\($JAVA\_HOME放這裡\)
+* ~/.bashrc : 個人設定檔\($HADOOP\_HOME放這裡\)
+{% endhint %}
+{% endtab %}
+
+{% tab title="設定hadoop程式環境變數" %}
+* hadoop-env.sh : 下hadoop相關指令，會執行此sh，會來找
+  * JAVA\_HOME                  :  java的路徑
+  * HADOOP\_HOME          : hadoop的路徑
+  * HADOOP\_CONF\_DIR  : hadoop設定檔的路徑
+
+```text
+# hadoop account
+su - hadoop
+
+# 設定hadoop程式環境變數
+nano /usr/local/hadoop/etc/hadoop/hadoop-env.sh
+	export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+	export HADOOP_HOME=/usr/local/hadoop
+	export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop
 ```
 {% endtab %}
 {% endtabs %}
