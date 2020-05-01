@@ -334,6 +334,10 @@ su - hadoop
 nano /usr/local/hadoop/etc/hadoop/core-site.xml
 
 <!-- 將hdfs系統的目錄設定在/home/hadoop/data下 -->
+<!-- 此為全域變數，NameNode跟DataNode會自己偵測並產生資料夾-->
+<!-- 
+不用在hdfs-stie.xml設定 dfs.namenode.name.dir 和dfs.datanode.name.dir這兩種屬性
+-->
 <property>
     <name>hadoop.tmp.dir</name>         
     <value>/home/hadoop/data</value>    
@@ -370,23 +374,26 @@ su - hadoop
 # 更改yarn-site.xml
 nano /usr/local/hadoop/etc/hadoop/yarn-site.xml
 
-<!--bdse212當作ResourceManager-->
+<!--bdse212.example.org當作ResourceManager-->
 <property>
 	   <name>yarn.resourcemanager.hostname</name>
 	   <value>bdse212.example.org</value>
 </property>	
     
-<!-- -->    
+<!--告訴NodeManager要跑shuffle-->    
 <property>
     <name>yarn.nodemanager.aux-services</name>
     <value>mapreduce_shuffle</value>
 </property>
 
 <!--白名單-->
+<!--放在此名單裡。NodeManager才會認得-->
 <property>
     <name>yarn.nodemanager.env-whitelist</name>
-    <value>JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,HADOOP_CONF_DIR,CLASSPATH_PREPEND_DISTCACHE,HADOOP_YARN_HOME,HADOOP_MAPRED_HOME</value>    (白名單,放在裡面才會跑) 
+    <value>JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,HADOOP_CONF_DIR,CLASSPATH_PREPEND_DISTCACHE,HADOOP_YARN_HOME,HADOOP_MAPRED_HOME</value>     
 </property>
+
+<!--NodeManager的設定-->
 <property>
     <name>yarn.nodemanager.resource.cpu-vcores</name>
     <value>3</value>
@@ -398,6 +405,14 @@ nano /usr/local/hadoop/etc/hadoop/yarn-site.xml
 <property>
     <name>yarn.scheduler.maximum-allocation-vcores</name>
     <value>3</value>
+</property>
+
+
+<!--YARN工作排程器的設定-->
+<!--平衡負載-->
+<property>
+    <name>yarn.resourcemanager.scheduler.class</name>
+    <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler</value>
 </property>
 <property>
     <name>yarn.scheduler.minimum-allocation-mb</name>
