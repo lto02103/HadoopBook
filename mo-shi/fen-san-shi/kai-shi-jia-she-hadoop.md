@@ -14,7 +14,7 @@ description: 複製VMs後才可以繼續下列步驟，有兩台VMs就要重複�
   * 無密碼登入
   * ip 跟主機改名才可以做
   * 若出現問題較好除錯
-* 
+
 {% tabs %}
 {% tab title="更改hosts" %}
 * 更改hosts檔，彼此nodes才認得對方的電腦是誰
@@ -39,6 +39,9 @@ nano /etc/hosts
     #      ip             FQDN            alias
     192.168.100.211 bdse211.example.org bdse211
     192.168.100.212 bdse212.example.org bdse212
+    192.168.100.213 bdse213.example.org bdse213
+    192.168.100.214 bdse214.example.org bdse214
+    192.168.100.215 bdse215.example.org bdse215
     
 #   192.168.56.90 master1.example.org master1
 #   192.168.56.89 master2.example.org master2
@@ -61,6 +64,9 @@ cat -A /etc/hosts   # 出現$結尾才是正確
 # 確認hosts內容是否正確(確認連線，所有的hosts都要確認)
 ping -c4 bdse211.example.org
 ping -c4 bdse212.example.org
+ping -c4 bdse213.example.org
+ping -c4 bdse214.example.org
+ping -c4 bdse215.example.org
 ```
 {% endtab %}
 
@@ -87,10 +93,10 @@ exit
 {% endtab %}
 
 {% tab title="數位簽章登入" %}
-
+* 透過數位簽章登入所有主機的hadoop帳號
 
 ```text
-# hadoop
+# hadoop account
 su - hadoop
 cd
 pwd
@@ -103,8 +109,54 @@ dpkg -l | grep 'openssh'  # 7.6版
 # in git 
 ssh -V # 8.2版
 
+# 設定數位簽章
+# RHEL派的一定要給密碼，會將密碼放在cache裡
 
+ssh-keygen -t rsa 
+    Enter file in which to save the key: [Return]
+    Enter passphrase (empty for no passphrase): [Return]
+    Enter same passphrase again: [Return]
+    
+ls -l .ssh
+    id_rsa     # 私鑰
+    id_rsa.pub # 公鑰
+    
+# 將公鑰灑給其他電腦
+# 當對方透過ssh要連進來時，會去下載公鑰，並產生自己的私鑰連進來。
+# 此步驟非正規作法，工作上這樣做要回家吃自己
+# 有N個主機就灑N次
+# 格式ssh-copy id hadoop@FQDN
+ssh-copy id hadoop@localhost            # 灑給自己(方法一)
+ssh-copy id hadoop@bdse211.example.org  # 灑給自己(方法二)
+ssh-copy id hadoop@bdse212.example.org  # 灑給其他主機
+ssh-copy id hadoop@bdse213.example.org  # 灑給其他主機
+ssh-copy id hadoop@bdse214.example.org  # 灑給其他主機
+ssh-copy id hadoop@bdse215.example.org  # 灑給其他主機
+
+# 檢查收到幾把公鑰
+# .ssh/authorized_keys : 此目錄只有hadoop本人可以read/write
+grep 'bdse' .ssh/authorized_keys | wc -l # 灑5把，就有5把
+
+# 測試是否授權成功
+# 以hadoop@bdse211為主機，登入對方主機
+ssh hadoop@bdse212.example.org
+exit
+ssh hadoop@bdse213.example.org
+exit
+ssh hadoop@bdse214.example.org
+exit
+ssh hadoop@bdse215.example.org
 ```
+
+{% hint style="danger" %}
+#### 授權數位簽章正規步驟
+
+將id\_rsa.pub寄email給server管理員，管理員會在server裡的對方的家建立.ssh/authorized\_keys，將公鑰放進此目錄下，才算建立數位簽章。
+
+對方才可以透過數位簽章的方式\(無密碼登入\)，登入你的家
+
+* 無密碼登入非同小可，需層層回報讓上面主管簽名授權才可以。
+{% endhint %}
 {% endtab %}
 {% endtabs %}
 
@@ -113,6 +165,10 @@ ssh -V # 8.2版
 {% tabs %}
 {% tab title="安裝hadoop" %}
 
+
+```text
+# 下載hadoop-3.2.1版
+```
 {% endtab %}
 {% endtabs %}
 
