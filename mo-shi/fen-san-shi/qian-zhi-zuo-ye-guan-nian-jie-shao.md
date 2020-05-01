@@ -211,7 +211,7 @@ $JAVA_HOME/bin/javac -version
 sudo -i
 
 # 檢查有無出現ipv6
-lsof -nPi | grep 'IPv6' 
+lsof -nPi | grep -i 'ipv6' 
 
 # 直接進去核心停掉ipv6即可
 nano /etc/default/grub

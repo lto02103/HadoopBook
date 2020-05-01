@@ -1,13 +1,15 @@
+---
+description: 複製VMs後才可以繼續下列步驟，有兩台VMs就要重複做兩次。
+---
+
 # 開始架設hadoop
 
-## 所需環境
+## 事前準備
 
-
-
-* 改hosts
+* 更改hosts
   * 讓nodes之間認得彼此的電腦是誰
 * 創建hadoop 帳號
-  * 專門給hadoop環境的帳號
+  * 專門管理hadoop系統的帳號
 * ssh 數位簽章登入 hadoop 帳號 
   * 無密碼登入
   * ip 跟主機改名才可以做
@@ -24,7 +26,9 @@ sudo -i
 
 # 編輯hosts檔
 # 格式 : ip FQDN alias
+# FQDN = Fully Qualifed Domain Name 
 # FQDN = hostname + domainname 
+
 nano /etc/hosts
 
     # 本機一定要加上去   
@@ -84,6 +88,51 @@ exit
 
 {% tab title="數位簽章登入" %}
 
+
+```text
+# hadoop
+su - hadoop
+cd
+pwd
+
+# 確認open-ssh版本
+dpkg -l | grep 'openssh'  # 7.6版
+
+# client端要比server端要新，才會認得key
+# putty 要0.73後
+# in git 
+ssh -V # 8.2版
+
+
+```
+{% endtab %}
+{% endtabs %}
+
+## 安裝hadoop
+
+{% tabs %}
+{% tab title="安裝hadoop" %}
+
+{% endtab %}
+{% endtabs %}
+
+## 更改hadoop系統設定檔
+
+{% tabs %}
+{% tab title="core-site.xml" %}
+
+{% endtab %}
+
+{% tab title="hdfs-site.xml" %}
+
+{% endtab %}
+
+{% tab title="yarn-site.xml" %}
+
+{% endtab %}
+
+{% tab title="mapred-site.xml" %}
+
 {% endtab %}
 {% endtabs %}
 
@@ -94,23 +143,32 @@ exit
 1. 要檢查沒有其他使用者才可以使用poweroff或是shutdown
 
 ```text
-sudo -i  # 切成#
+# root
+sudo -i 
+
+# 檢查使用者 
 who
 lsof -nPi | grep -i 'esta' 
 ```
 
-```text
-Who
-1. 0 :圖形介面(desktop)的terminal
-2. pts/1 :遠端terminal(putty) (配合最後一欄的IP:VMnet8的IP)
-3. tty/3 :3號的console (ctrl+alt+3)
-```
+who
 
-若不檢查,直接poweroff。hadoop上的這些資料會損毀
+1. 0 : 圖形介面\(desktop\)的terminal
+2. pts/1 : 遠端terminal\(putty\)
+3. tty/3  : 3號的console \(ctrl+alt+3\) 
+
+
+
+{% hint style="info" %}
+若不檢查下列這些nodes，直接poweroff。hadoop上的資料會損毀
 
 * namenode
-* nodemanager
+* resourcemanager
+* jobhistorysever
 * spark master
+{% endhint %}
+
+
 
 |  | poweroff | shutdown |
 | :--- | :--- | :--- |
