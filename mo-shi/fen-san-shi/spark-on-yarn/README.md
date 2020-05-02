@@ -94,12 +94,8 @@ source ~/.bashrc # 方法一 (絕對路徑)
 # 查看
 env | grep 'spark'
 
-# 確認版本以及找得到$JAVA_HOME
-hadoop version
-```
-
-```text
-
+# 確認版本以及找得到$SPARK_HOME
+spark version
 ```
 {% endtab %}
 
