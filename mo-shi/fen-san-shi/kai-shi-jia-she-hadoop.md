@@ -727,14 +727,28 @@ jps指令
 
 * 用WebUI觀察
   * http://bdse212.example.org:8088
+* 跑mapreduce的時候，hdfs會自動建立
+  * /user/hadoop
+  * /tmp 
+    * 權限770
+    * drwxrwx---
 
 ```text
+ # hadoop account
+ su - hadoop
  
+ # 測試map reduce 
  hadoop jar  \
  /usr/local/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.2.1.jar \
  pi 30 10000
  
+# 檢查是否建立/user 及 /tmp 目錄
+ hdfs dfs -ls /
  
+# 如果沒有這兩個目錄，請手動建立 
+	hdfs dfs -mkdir /user (if not exist)
+	hdfs dfs -mkdir /tmp (if not exist)
+	hdfs dfs -chmod g=rwx /tmp
 ```
 
 
