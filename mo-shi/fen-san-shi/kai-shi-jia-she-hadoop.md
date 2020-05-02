@@ -725,6 +725,18 @@ jps指令
 
 ## 測試mapreduce
 
+* 用WebUI觀察
+  * http://bdse212.example.org:8088
+
+```text
+ 
+ hadoop jar  \
+ /usr/local/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.2.1.jar \
+ pi 30 10000
+ 
+ 
+```
+
 
 
 ## 節點重啟
