@@ -8,6 +8,9 @@ description: 複製VMs後才可以繼續下列步驟，有兩台VMs就要重複�
 
 * 更改hosts
   * 讓nodes之間認得彼此的電腦是誰
+* 新增hosts至win10
+  * win10才知道自定義的hosts是誰
+  * 才可以在win10上使用WebUI
 * 創建hadoop 帳號
   * 專門管理hadoop系統的帳號
 * ssh 數位簽章登入 hadoop 帳號 
@@ -672,7 +675,7 @@ jps指令
 {% endtab %}
 
 {% tab title=" 啟動YARN" %}
-* 在bdse212.example.org啟動YRAN
+* 在bdse212.example.org啟動YARN
 * WebUI
   * http://bdse212.example.org:8088
 
