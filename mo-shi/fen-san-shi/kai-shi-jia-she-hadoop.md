@@ -70,6 +70,22 @@ ping -c4 bdse215.example.org
 ```
 {% endtab %}
 
+{% tab title="新增hosts至win10" %}
+* 要讓win10知道我們自定義的hosts是誰，只做一次
+* 將hosts內容貼到C:\Windows\System32\drivers\etc\下的hosts 裡面
+  * 不能override，要append上去
+
+{% code title="hosts" %}
+```text
+192.168.100.211 bdse211.example.org bdse211
+192.168.100.212 bdse212.example.org bdse212
+192.168.100.213 bdse213.example.org bdse213
+192.168.100.214 bdse214.example.org bdse214
+192.168.100.215 bdse215.example.org bdse215
+```
+{% endcode %}
+{% endtab %}
+
 {% tab title="創建hadoop 帳號" %}
 * 創建hadoop帳號 
 
@@ -164,7 +180,7 @@ ssh hadoop@bdse215.example.org
 
 {% tabs %}
 {% tab title="安裝hadoop" %}
-
+* hadoop-3.2.1
 
 ```text
 # root
@@ -219,6 +235,7 @@ chown -R hadoop:hadoop /usr/local/hadoop
 su - hadoop
 
 # 設定個人環境變數
+# 應用程式路徑要放在.bashrc
 nano ~/.bashrc
  ​   # Set HADOOP_HOME
     export HADOOP_HOME=/usr/local/hadoop
@@ -272,7 +289,7 @@ nano /usr/local/hadoop/etc/hadoop/hadoop-env.sh
 
 1. NameNode : bdse211.example.org
 2. ResourceManager : bdse212.example.org
-3. JobhostoryServer : bdse213.example.org
+3. JobhostoryServer : bdse213.example.org \(**可以放在worker裡\)**
 4. workers :
    * bdse213.example.org
    * bdse214.example.org
@@ -321,6 +338,8 @@ nano /usr/local/hadoop/etc/hadoop/hadoop-env.sh
   1. [Apache hadoop 3.2.1](https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/ClusterSetup.html)
   2. [cloudera](https://docs.cloudera.com/HDPDocuments/HDP2/HDP-2.6.5/bk_reference/content/hdfs-ports.html)
 
+### 修改site檔
+
 {% tabs %}
 {% tab title="core-site.xml" %}
 * core-site的設定檔
@@ -338,6 +357,12 @@ nano /usr/local/hadoop/etc/hadoop/core-site.xml
 <!-- 
 不用在hdfs-stie.xml設定 dfs.namenode.name.dir 和dfs.datanode.name.dir這兩種屬性
 -->
+<!--此為採用雲端硬碟的切割方式 (cloud HD partition)。
+根目錄大(/)，家的空間就大(/home)
+用df -h 或 mount | grep -E 'ext[234] | xfs' 確認。
+xfs 為RHEL7後才有的檔案系統。
+-->
+<!-- 雲端硬碟：home很大，伺服器：home很小(最多5G)-->
 <property>
     <name>hadoop.tmp.dir</name>         
     <value>/home/hadoop/data</value>    
@@ -359,13 +384,49 @@ hadoop conftest
 {% endtab %}
 
 {% tab title="hdfs-site.xml" %}
+* hdfs-site的設定檔
 
+```text
+# hadoop accont 
+su - hadoop
+
+# 更改hdfs-site.xml 
+nano /usr/local/hadoop/etc/hadoop/hdfs-site.xml
+
+<!-- 副本份數、block大小都由hdfs-stie.xml 做決定-->
+<!-- 跟NameNode,DataNode相關也在此-->
+<!-- 設定群組-->
+<property>
+    <name>dfs.permissions.superusergroup</name>
+    <value>hadoop</value>
+    <description>The name of the group of super-users. The value should be a single group name.</description>
+</property>
+
+<!--
+<property>
+    <name>dfs.blocksize</name>
+    <value>134217728</value>
+    <description>Block size</description>
+</property>
+-->
+<!--
+<property>
+    <name>dfs.replication	</name>
+    <value>3</value>
+    <description>Number of replications</description>
+</property>
+-->
+
+# check xml syntax
+hadoop conftest
+```
 {% endtab %}
 
 {% tab title="yarn-site.xml" %}
 * yarn-site的設定檔
   * ResourceManager
   * NodeManager
+* [白名單](https://issues.apache.org/jira/browse/MAPREDUCE-6704)
 
 ```text
 # hadoop account
@@ -375,6 +436,9 @@ su - hadoop
 nano /usr/local/hadoop/etc/hadoop/yarn-site.xml
 
 <!--bdse212.example.org當作ResourceManager-->
+<!-- 不用設定port，預設用8088-->
+<!-- 若要知道預設的port，請詳閱官方文件或是查看官方的source programing -->
+<!-- hadoop 是jar檔，看不到source-->
 <property>
 	   <name>yarn.resourcemanager.hostname</name>
 	   <value>bdse212.example.org</value>
@@ -517,9 +581,135 @@ nano /usr/local/hadoop/etc/hadoop/mapred-site.xml
 hadoop conftest
 ```
 {% endtab %}
+
+{% tab title="wokers" %}
+* 要增加workers名單，NameNode,ResourceManager才知道workers是誰
+
+```text
+# hadoop account
+su - hadoop
+
+# 有N台worker就要放N台
+# 給FQDN
+# 新增workers名單
+nano /usr/local/hadoop/etc/hadoop/workers
+    bdse213.example.org
+    bdse214.example.org
+    bdse215.example.org
+    
+    # ^+s > ^+x
+    
+# 檢查換行是否正確 ，避免程式抓不到最後一行
+# nano 2.9.3 存檔時會自動換行
+cat -A /usr/local/hadoop/etc/hadoop/workers
+```
+{% endtab %}
+{% endtabs %}
+
+## 啟動hadoop
+
+### 目錄
+
+#### 啟動順序
+
+1. start-dfs.sh
+2. start-yarn.sh
+3. mapred --daemon start historyserver
+
+#### 關機順序
+
+1. mapred --daemon stop historyserver
+2. stop-yarn.sh
+3. stop-dfs.sh
+
+### 詳細過程
+
+{% tabs %}
+{% tab title="啟動HDFS" %}
+* 在bdse211.example.org啟動HDFS
+* WebUI
+  * http://bdse211.example.org:9870
+
+```text
+# hadoop account 
+su - hadoop
+
+# 格式化
+# 只需要一次
+hdfs namenode -format
+
+# 啟動hdfs
+start-dfs.sh
+
+# 查看有無啟動
+jps
+```
+
+{% hint style="info" %}
+jps指令
+
+* bdse211主機會出現**NameNode & SecondaryNameNode**
+* bdse212主機不會出現任何東西\(ResourceManager\)
+* workers會出現**DataNode**
+{% endhint %}
+{% endtab %}
+
+{% tab title=" 啟動YARN" %}
+* 在bdse212.example.org啟動YRAN
+* WebUI
+  * http://bdse212.example.org:8080
+
+```text
+# hadoop account 
+su - hadoop
+
+# 啟動yarn
+start-yarn.sh
+
+# 查看有無啟動
+jps
+```
+
+{% hint style="info" %}
+jps指令
+
+* bdse211主機會出現NameNode & SecondaryNameNode
+* bdse212主機會出現**ResourceManager**
+* workers會出現DataNode跟**NodeManager**
+{% endhint %}
+{% endtab %}
+
+{% tab title="啟動Jobhistoryserver" %}
+* 在bdse213.example.org啟動Jobhistoryserver
+
+```text
+# hadoop account 
+su - hadoop
+
+# 啟動
+
+# 查看有無啟動
+jps
+```
+{% endtab %}
 {% endtabs %}
 
 
+
+{% hint style="info" %}
+錯誤要看logs檔
+
+```text
+# hadoop account 
+su - hadoop
+
+# logs
+cd /usr/local/hadoop
+less -N logs
+```
+{% endhint %}
+
+## 節點重啟
 
 ## 使用Hadoop上的注意事項
 
@@ -615,10 +805,10 @@ ps -f #檢查(process fullist)
 ```text
 win10(Host)  
  _________   
-|         |
-|  putty  |
+|                      |
+|    putty       |
 |_________|
-   |    ↑    
+   |  ↑    
    |    |    
    |    |    
    |    |    
@@ -630,6 +820,12 @@ win10(Host)
      帳密(hadoop)①  |_________|
                     管理應用程式     
 
-
 ```
+
+## 透過filezilla 傳送檔案的注意事項
+
+* 要用ubuntu身份\(管理員\)
+* 不能用hadoop身份\(一般使用者\)
+* RHEL派
+* Ubuntu派
 
