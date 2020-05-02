@@ -2,7 +2,6 @@
 
 * [Introduction](README.md)
 * [Untitled](untitled.md)
-* [Untitled](untitled-1.md)
 
 ## 觀念
 
