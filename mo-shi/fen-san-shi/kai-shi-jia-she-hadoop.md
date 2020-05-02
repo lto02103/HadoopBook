@@ -385,6 +385,8 @@ hadoop conftest
 
 {% tab title="hdfs-site.xml" %}
 * hdfs-site的設定檔
+  * NameNode
+  * DataNode
 
 ```text
 # hadoop accont 
@@ -411,12 +413,25 @@ nano /usr/local/hadoop/etc/hadoop/hdfs-site.xml
 -->
 <!--
 <property>
-    <name>dfs.replication	</name>
+    <name>dfs.replication</name>
     <value>3</value>
     <description>Number of replications</description>
 </property>
 -->
-
+<!--
+<property>
+    <name>dfs.namenode.name.dir</name>
+    <value>/home/hadoop/data/dfs/name</value>
+    <description>Namenode files location</description>
+</property>
+-->
+<!--
+<property>
+    <name>dfs.datanode.data.dir</name>
+    <value>/home/hadoop/data/dfs/data</value>
+    <description>Datanode files location</description>
+</property>
+-->
 # check xml syntax
 hadoop conftest
 ```
@@ -629,6 +644,7 @@ cat -A /usr/local/hadoop/etc/hadoop/workers
 * 在bdse211.example.org啟動HDFS
 * WebUI
   * http://bdse211.example.org:9870
+  * 查看NameNode & DataNode資源
 
 ```text
 # hadoop account 
@@ -649,6 +665,7 @@ jps
 jps指令
 
 * bdse211主機會出現**NameNode & SecondaryNameNode**
+  * **SecondaryNameNode在HA時會自動消失**
 * bdse212主機不會出現任何東西\(ResourceManager\)
 * workers會出現**DataNode**
 {% endhint %}
@@ -657,7 +674,7 @@ jps指令
 {% tab title=" 啟動YARN" %}
 * 在bdse212.example.org啟動YRAN
 * WebUI
-  * http://bdse212.example.org:8080
+  * http://bdse212.example.org:8088
 
 ```text
 # hadoop account 
@@ -681,41 +698,166 @@ jps指令
 
 {% tab title="啟動Jobhistoryserver" %}
 * 在bdse213.example.org啟動Jobhistoryserver
+* WebUI
+  * http://bdse213.example.org:19888
 
 ```text
 # hadoop account 
 su - hadoop
 
 # 啟動
+mapred --daemon start historyserver 
 
 # 查看有無啟動
+jps
+```
+
+{% hint style="info" %}
+jps指令
+
+* bdse211主機會出現NameNode & SecondaryNameNode
+* bdse212主機會出現ResourceManager
+* workers會出現DataNode跟NodeManager
+  * **只有bdse213主機會多一個Jobhistoryserver**
+{% endhint %}
+{% endtab %}
+{% endtabs %}
+
+## 測試mapreduce
+
+
+
+## 節點重啟
+
+{% tabs %}
+{% tab title="DataNode重啟" %}
+* 單獨重啟
+
+  * 在worker上重啟
+  * 不會造成叢集損毀
+
+  ```text
+  # 關閉DataNode
+  hdfs --daemon stop datanode
+
+  # 確認
+  jps
+
+  # 啟動DataNode
+  hdfs --daemon start datanode 
+
+  # 確認
+  jps
+  ```
+
+* 整個重啟
+
+  * 在NameNode上重啟
+  * 要確保HDFS層上的重要master節點都已關閉，避免叢集損毀
+    * ResourceManager
+    * Jobhistorysserver
+
+  ```text
+  # 關閉HDFS
+  stop-dfs.sh
+
+  # 確認
+  jps
+
+  # 啟動HDFS
+  start-dfs.sh
+
+  # 確認
+  jps
+  ```
+{% endtab %}
+
+{% tab title="NodeManager重啟" %}
+* 單獨重啟
+
+  * 在worker上重啟
+  * 不會造成叢集損毀
+
+  ```text
+  # 關閉NodeManager
+  yarn --daemon stop nodemanager
+
+  # 確認
+  jps
+
+  # 啟動NodeManager
+  yarn --daemon start nodemanager 
+
+  # 確認
+  jps
+  ```
+
+* 整個重啟
+
+  * 在ResourceManager上重啟
+  * 要確保YARN層上的重要master節點都已關閉
+    * Jobhistorysserver
+
+  ```text
+  # 關閉YARN
+  stop-yarn.sh
+
+  # 確認
+  jps
+
+  # 啟動YARN
+  start-yarn.sh
+
+  # 確認
+  jps
+  ```
+{% endtab %}
+
+{% tab title="Jobhistoryserver重啟" %}
+* 單獨重啟
+  * 在worker上重啟
+  * 不會造成叢集損毀
+
+```text
+# 關閉Jobhistoryserver
+mapred --daemon stop historyserver 
+
+# 確認
+jps
+
+# 啟動NodeManager
+mapred --daemon start historyserver 
+
+# 確認
 jps
 ```
 {% endtab %}
 {% endtabs %}
 
+## 故障排除
 
-
-{% hint style="info" %}
+{% hint style="warning" %}
 錯誤要看logs檔
 
 ```text
 # hadoop account 
 su - hadoop
 
-# logs
+# 查看logs
 cd /usr/local/hadoop
 less -N logs
 ```
 {% endhint %}
 
-## 節點重啟
-
 ## 使用Hadoop上的注意事項
 
+{% tabs %}
+{% tab title="檢查使用者" %}
+* 要檢查沒有其他使用者才可以使用poweroff或是shutdown
 
-
-1. 要檢查沒有其他使用者才可以使用poweroff或是shutdown
+|  | poweroff | shutdown |
+| :--- | :--- | :--- |
+| 功用 | 直接關閉 | 預設等待1分鐘,會通知其他使用者 |
 
 ```text
 # root
@@ -732,9 +874,7 @@ who
 2. pts/1 : 遠端terminal\(putty\)
 3. tty/3  : 3號的console \(ctrl+alt+3\) 
 
-
-
-{% hint style="info" %}
+{% hint style="danger" %}
 若不檢查下列這些nodes，直接poweroff。hadoop上的資料會損毀
 
 * namenode
@@ -742,25 +882,23 @@ who
 * jobhistorysever
 * spark master
 {% endhint %}
+{% endtab %}
 
-
-
-|  | poweroff | shutdown |
-| :--- | :--- | :--- |
-| 功用 | 直接關閉 | 預設等待1分鐘,會通知其他使用者 |
-
-1. 檢查時區
+{% tab title="檢查時區" %}
+* 檢查時區
 
 ```text
 timedatectl
 ```
 
 若時間不對,叢集會跑不起來。
+{% endtab %}
+{% endtabs %}
 
-1. 正規步驟\(玩Linux時\)
+## 正規步驟
 
-**tags: 小心離職 資安**
-
+{% tabs %}
+{% tab title="平常使用Linux時" %}
 * server走putty
 * desktop直接走使用者
 
@@ -787,20 +925,24 @@ win10(Host)        Linux(使用者)         管理系統(root)
 
 ```
 
-* 帳密:管理員使用的login帳號\(e.g :ubuntu\)
-* Debian,ubuntu的root帳號是被停用的,只能由使用者login,再切root
-* 在root裡,只能exit,不能su
-* 要正常exit,否則檔案會損毀
-* 一個使用者只開一個terminal
+1. 帳密:管理員使用的login帳號\(e.g :ubuntu\)
+2. Debian,ubuntu的root帳號是被停用的,只能由使用者login,再切root
+3. 在root裡,只能exit,不能su
+4. 要正常exit,否則檔案會損毀
+5. 一個使用者只開一個terminal
 
-切一般使用者不用密碼就是錯誤的 會離職
+{% hint style="danger" %}
+切一般使用者不用密碼就是錯誤的。小心吃自己
 
 ```text
-ps -f #檢查(process fullist)
+# 檢查(process fullist)
+ps -f 
 ```
+{% endhint %}
+{% endtab %}
 
-1. 正規步驟\(正式上班時\)
-   * 只能走putty
+{% tab title="正式上班" %}
+* 只能走putty
 
 ```text
 win10(Host)  
@@ -819,13 +961,28 @@ win10(Host)
     -------------->|         |
      帳密(hadoop)①  |_________|
                     管理應用程式     
-
 ```
+{% endtab %}
+{% endtabs %}
 
 ## 透過filezilla 傳送檔案的注意事項
 
-* 要用ubuntu身份\(管理員\)
-* 不能用hadoop身份\(一般使用者\)
-* RHEL派
-* Ubuntu派
+#### 要將檔案複製到/home/hadoop下
+
+* 在win10
+  * 透過FileZilla用ubuntu\(系統管理員\)身份上傳
+  * 不能透過hadoop\(應用程式管理員\)身份上傳。會被稽核，小心吃自己
+* 在Linux
+  * 兩種方式
+    * 用ubuntu身份\(系統管理員\)
+      * RHEL派不能隨意進別人家
+      * 實際工作用法
+    * 用hadoop身份\(應用程式管理員\)
+
+      * Ubuntu派
+      * 可以隨意進別人家
+
+      ```text
+       cp ~ubuntu/xxx ~hadoop/
+      ```
 
