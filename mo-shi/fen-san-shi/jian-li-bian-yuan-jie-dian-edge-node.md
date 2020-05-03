@@ -88,6 +88,7 @@ nano ~/.bashrc
     export SPARK_HOME=/usr/local/spark
     # 在pyspark裡使用pandas
     # spark2.4才需要，spark3.0 koalas會完全移植上去，就不需要設定了
+    # 將arrow降級
     export ARROW_PRE_0_15_IPC_FORMAT=1  
     
     # ^+s > ^+x

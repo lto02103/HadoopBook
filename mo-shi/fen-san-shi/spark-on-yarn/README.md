@@ -7,11 +7,22 @@ description: 在hadoop系統裡架設spark，並且使用pyspark。
 ## Spark介紹
 
 * pyspark
+  * python
+  * 互動式
+  * [使用dataframe，速度已經跟scala一樣快](https://databricks.com/session/a-tale-of-three-apache-spark-apis-rdds-dataframes-and-datasets)
 * spark-submit
+  * java
 * spark-class
+  * java
 * spark-shell
+  * scala
+  * 互動式
 * sparkR
+  * R
+  * 互動式
 * spark-sql
+  * SQL command
+  * 互動式
 
 ## 安裝spark
 
@@ -182,4 +193,8 @@ http://bdse212.example.org:8088
 ## 處理jar檔
 
 * ddddd
-* 
+
+```text
+   
+```
+
