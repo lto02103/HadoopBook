@@ -70,7 +70,7 @@ groups user01
 # 切換成user
 su - user01
 
-# 設定環境變數
+# 設定個人環境變數
 nano ~/.bashrc
     
     # hadoop
